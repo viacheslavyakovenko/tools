@@ -1,0 +1,32 @@
+plugins {
+	id 'java'
+	id 'maven-publish'
+}
+
+group = 'com.vaclav'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
+dependencies {
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			groupId = 'com.vaclav'
+			artifactId = 'benchmark'
+			version = '0.0.1-SNAPSHOT'
+
+			from components.java
+		}
+	}
+}
