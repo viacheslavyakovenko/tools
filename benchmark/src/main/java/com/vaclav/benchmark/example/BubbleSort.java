@@ -6,7 +6,7 @@ import com.vaclav.benchmark.core.ScenarioType;
 
 import java.security.NoSuchAlgorithmException;
 
-@Scenario(scenarioType = ScenarioType.PROPOSED)
+@Scenario(scenarioType = ScenarioType.BASE)
 public class BubbleSort {
 
     @ScenarioAction

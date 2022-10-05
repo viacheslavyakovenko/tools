@@ -2,8 +2,9 @@ package com.vaclav.benchmark.example;
 
 import com.vaclav.benchmark.core.Scenario;
 import com.vaclav.benchmark.core.ScenarioAction;
+import com.vaclav.benchmark.core.ScenarioType;
 
-@Scenario
+@Scenario(scenarioType = ScenarioType.PROPOSED)
 public class QuickSort {
 
     @ScenarioAction
