@@ -6,6 +6,7 @@ import OPi.GPIO as GPIO # This is the GPIO library we need to use the GPIO pins 
 import time # This is the time library, we need this so we can use the sleep function
 import firebase_admin
 import json
+import configparser
 
 from firebase_admin import credentials
 from firebase_admin import db
@@ -17,10 +18,14 @@ class ElAvailability:
         self.event_datetime = event_datetime
         self.sensor_id = sensor_id
 
+config = configparser.RawConfigParser()
+config.read('resources/credentials.py')
+firebase_token = config.get('firebase', 'firebase_token')
+firebase_db_uri = config.get('firebase', 'firebase_db_uri')
 
 channel = 17
-cred = credentials.Certificate("PLACE YOUR FIREBASE CREDENTIAL FILE LOCATION HERE")
-default_app = firebase_admin.initialize_app(cred, {'databaseURL':'PLACE FIREBASE DB URI HERE'})
+cred = credentials.Certificate(firebase_token)
+default_app = firebase_admin.initialize_app(cred, {'databaseURL':firebase_db_uri})
 ref = db.reference("/electricity/availability")
 
 def setup():
