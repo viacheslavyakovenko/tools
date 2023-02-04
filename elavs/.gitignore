@@ -9,6 +9,7 @@ build/
 **/resources/credentials.py
 **/resources/*.json
 .swp
+nohup.out
 
 ### STS ###
 .apt_generated
