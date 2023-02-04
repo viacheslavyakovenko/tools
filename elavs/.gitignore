@@ -5,7 +5,11 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+
 **/resources/credentials.py
+**/resources/*.json
+.swp
+nohup.out
 
 ### STS ###
 .apt_generated
