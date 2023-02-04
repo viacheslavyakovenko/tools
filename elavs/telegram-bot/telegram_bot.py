@@ -6,25 +6,23 @@ from firebase_admin import db
 from datetime import date, datetime
 from dateutil.parser import parse
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, KeyboardButton, ReplyKeyboardMarkup
-from el_availability import ElAvailability
-
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, CallbackQueryHandler, filters
+import configparser
+
+
+#TODO: should be moved to external module
+class ElAvailability:
+    def __init__(self, event_datetime, sensor_id, status):
+        self.event_datetime = event_datetime
+        self.sensor_id = sensor_id
+        self.status = status
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
 
-global cred 
-global default_app 
-global ref 
-
-cred = credentials.Certificate("/home/vaclav/prj/u-sensor-not-repo/petprj-firebase-adminsdk-m9fp4-e509ecc234.json")
-default_app = firebase_admin.initialize_app(cred, {
-		'databaseURL':'https://petprj-default-rtdb.firebaseio.com/'
-		})
-
-ref = db.reference("/electricity/availability/")
+global cred, default_app, ref, firebase_token, firebase_db_uri, firebase_collection_ref, telegram_token, telegram_user
 
 def getLastEvents( count ):
     data = ref.order_by_key().limit_to_last(count).get()
@@ -55,43 +53,46 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     keyboard = [
         [
-            KeyboardButton("1", callback_data="1"),
-            KeyboardButton("5", callback_data="5")
+            KeyboardButton("Остання подія"),
+            KeyboardButton("5 останніх подій")
         ],
-        [ KeyboardButton("stat") ]
+        [ KeyboardButton("Статистика") ]
     ]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=False)
 
     await update.message.reply_text("Please choose:", reply_markup=reply_markup)
 
-async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
+async def button_reaction(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Parses the CallbackQuery and updates the message text."""
-    query = update.callback_query
-
-    # CallbackQueries need to be answered, even if no notification to the user is needed
-    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
-    await query.answer()
-
-    match query.data:
-        case "1":
+    match update.message.text:
+        case "Остання подія":
             await context.bot.send_message(chat_id=update.effective_chat.id, text = getLastEvents(1))
-        case "5":
+        case "5 останніх подій":
             await context.bot.send_message(chat_id=update.effective_chat.id, text = "Ваша Галя балувана - хоче все і відразу!")
-        case stat:
+        case "Статистика":
             await context.bot.send_message(chat_id=update.effective_chat.id, text = "Починається ... Дочекайтесь наступного релізу!")
 
 if __name__ == '__main__':
-    application = ApplicationBuilder().token('PLACE TELEGRAM BOT TOKEN HERE').build()
+
+    config = configparser.RawConfigParser()
+    config.read('resources/credentials.py')
+
+    firebase_token = config.get('firebase', 'token')
+    firebase_db_uri = config.get('firebase', 'db_uri')
+    firebase_collection_ref = config.get('firebase', 'collection_ref')
+    cred = credentials.Certificate(firebase_token)
+    default_app = firebase_admin.initialize_app(cred, {
+            'databaseURL':firebase_db_uri
+            })
+    ref = db.reference(firebase_collection_ref)
+
+    telegram_token = config.get('telegram', 'token')
+    application = ApplicationBuilder().token(telegram_token).build()
     
     start_handler = CommandHandler('start', start)
     application.add_handler(start_handler)
     
-    echo_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo)
-    application.add_handler(echo_handler)
+    button_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), button_reaction)
+    application.add_handler(button_handler)
     
-    application.add_handler(CallbackQueryHandler(button))
-
     application.run_polling()

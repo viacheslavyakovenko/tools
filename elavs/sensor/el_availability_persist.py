@@ -57,13 +57,6 @@ def callback(channel):
     print(dtoJson)
     ref.push().set(dtoJson)
 
-
-#        print(datetime.now().isoformat() + " 220v on,  value: " + str(value))
-#        row = ElAvailability(current_datetime, 1, True)
-#        json = json.dumps(row.__dict__)
-#        ref.push().set(json)
-
-
 setup()
 GPIO.add_event_detect(channel, GPIO.BOTH, bouncetime=400)
 GPIO.add_event_callback(channel, callback)
