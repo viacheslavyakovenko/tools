@@ -1,13 +1,14 @@
-import logging
-import firebase_admin
 import json
-from firebase_admin import credentials
-from firebase_admin import db
-from datetime import date, datetime
-from dateutil.parser import parse
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, KeyboardButton, ReplyKeyboardMarkup
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, CallbackQueryHandler, filters
+import emoji
+import logging
 import configparser
+import firebase_admin
+
+from firebase_admin import db
+from firebase_admin import credentials
+from dateutil.parser import parse
+from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
+from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 
 
 #TODO: should be moved to external module
@@ -25,14 +26,17 @@ logging.basicConfig(
 global cred, default_app, ref, firebase_token, firebase_db_uri, firebase_collection_ref, telegram_token, telegram_user
 
 def getLastEvents( count ):
+
     data = ref.order_by_key().limit_to_last(count).get()
-    print(data)
     for key, val in data.items():
         row = json.loads(val, object_hook=lambda d: ElAvailability(**d))
         event_datetime = parse(row.event_datetime)
         formated_event_datetime = event_datetime.strftime("%d-%m-%Y %H:%M")
-        print(row.event_datetime, row.status)
-    msg = "Станом на " + formated_event_datetime + " електрика : " + row.status
+    if row.status == 'On':
+        status_symbol = emoji.emojize(':green_heart:')
+    else:
+        status_symbol = emoji.emojize(':broken_heart:')
+    msg = status_symbol + " Станом на " + formated_event_datetime + " електрика : " + row.status
     return msg
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -40,16 +44,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=update.effective_chat.id, 
         text="Я телеграм бот, якій розкаже тобі, чи є зараз електрика на трансформаторі 2182!")
     await context.bot.send_message(chat_id=update.effective_chat.id, text = getLastEvents(1))
-
-    # keyboard = [
-    #     [
-    #         InlineKeyboardButton("Станом на зараз", callback_data="1"),
-    #         InlineKeyboardButton("Останні 5 подій", callback_data="5"),
-    #     ],
-    #     [InlineKeyboardButton("Статистика", callback_data="stat")],
-    # ]
-
-    # reply_markup = InlineKeyboardMarkup(keyboard)
 
     keyboard = [
         [
