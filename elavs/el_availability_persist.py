@@ -14,14 +14,8 @@ from datetime import date, datetime
 
 from el_availability import ElAvailability
 
-# class ElAvailability:
-#     def __init__(self, event_datetime, sensor_id, status):
-#         self.status = status
-#         self.event_datetime = event_datetime
-#         self.sensor_id = sensor_id
-
 config = configparser.RawConfigParser()
-config.read('resources/credentials.py')
+config.read('resources/server.properties')
 firebase_token = config.get('firebase', 'firebase_token')
 firebase_db_uri = config.get('firebase', 'firebase_db_uri')
 

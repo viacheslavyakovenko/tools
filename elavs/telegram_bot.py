@@ -10,13 +10,14 @@ from dateutil.parser import parse
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 
+from el_availability import ElAvailability
 
-#TODO: should be moved to external module
-class ElAvailability:
-    def __init__(self, event_datetime, sensor_id, status):
-        self.event_datetime = event_datetime
-        self.sensor_id = sensor_id
-        self.status = status
+# #TODO: should be moved to external module
+# class ElAvailability:
+#     def __init__(self, event_datetime, sensor_id, status):
+#         self.event_datetime = event_datetime
+#         self.sensor_id = sensor_id
+#         self.status = status
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
