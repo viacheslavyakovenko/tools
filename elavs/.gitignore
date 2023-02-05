@@ -10,6 +10,7 @@ build/
 **/resources/*.json
 .swp
 nohup.out
+**/__pycache__/
 
 ### STS ###
 .apt_generated
