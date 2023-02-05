@@ -9,8 +9,6 @@ from dateutil.parser import parse
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 
-from el_availability import ElAvailability
-
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
@@ -34,7 +32,8 @@ async def button_reaction(update: Update, context: ContextTypes.DEFAULT_TYPE):
         case "5 останніх подій":
             await context.bot.send_message(chat_id=update.effective_chat.id, text = "Ваша Галя балувана - хоче все і відразу!")
         case "Статистика":
-            await context.bot.send_message(chat_id=update.effective_chat.id, text = "Починається ... Дочекайтесь наступного релізу!")
+            # await context.bot.send_message(chat_id=update.effective_chat.id, text = "Починається ... Дочекайтесь наступного релізу!")
+            await context.bot.send_message(chat_id=update.effective_chat.id, text = util.min_statistic(ref))
 
 def menu_setup():
 

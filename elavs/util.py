@@ -29,3 +29,7 @@ def get_last_events(ref: Reference, count: int ):
         status_symbol = emoji.emojize(':broken_heart:')
     msg = status_symbol + " Станом на " + formated_event_datetime + " електрика : " + row.status
     return msg
+
+def min_statistic(ref: Reference):
+
+    return "Починається ... Дочекайтесь наступного релізу!"
