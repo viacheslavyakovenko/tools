@@ -69,7 +69,7 @@ async def button_reaction(update: Update, context: ContextTypes.DEFAULT_TYPE):
 if __name__ == '__main__':
 
     config = configparser.RawConfigParser()
-    config.read('resources/credentials.py')
+    config.read('resources/telegrambot.properties')
 
     firebase_token = config.get('firebase', 'token')
     firebase_db_uri = config.get('firebase', 'db_uri')
