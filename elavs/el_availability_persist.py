@@ -12,11 +12,13 @@ from firebase_admin import credentials
 from firebase_admin import db
 from datetime import date, datetime
 
-class ElAvailability:
-    def __init__(self, event_datetime, sensor_id, status):
-        self.status = status
-        self.event_datetime = event_datetime
-        self.sensor_id = sensor_id
+from el_availability import ElAvailability
+
+# class ElAvailability:
+#     def __init__(self, event_datetime, sensor_id, status):
+#         self.status = status
+#         self.event_datetime = event_datetime
+#         self.sensor_id = sensor_id
 
 config = configparser.RawConfigParser()
 config.read('resources/credentials.py')
