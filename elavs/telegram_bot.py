@@ -27,8 +27,7 @@ async def button_reaction(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     match update.message.text:
         case "Остання подія":
-
-            await context.bot.send_message(chat_id=update.effective_chat.id, text = util.get_last_events(ref, 1))
+            await context.bot.send_message(chat_id=update.effective_chat.id, text = util.create_last_event_message(ref))
         case "5 останніх подій":
             await context.bot.send_message(chat_id=update.effective_chat.id, text = "Ваша Галя балувана - хоче все і відразу!")
         case "Статистика":
