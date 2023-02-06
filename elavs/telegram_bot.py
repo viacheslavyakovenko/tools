@@ -18,17 +18,17 @@ logging.basicConfig(
     level=logging.INFO
 )
 
-global cred, default_app, ref, firebase_token, firebase_db_uri, firebase_collection_ref, telegram_token, telegram_user, reply_markup, last_status
+global cred, default_app, ref, firebase_token, firebase_db_uri, firebase_collection_ref, telegram_token, telegram_user, reply_markup, last_status, mychat_id
 
 async def check_status(context: ContextTypes.DEFAULT_TYPE):
 
-    global last_status
+    global last_status, mychat_id
     logging.debug("Status checking begin ...")
     event = util.get_last_event(ref)
     if event.status != last_status:
         logging.info("last_status chanbed from " + last_status + " to " + event.status)
         last_status = event.status
-        await context.bot.send_message(chat_id=404946104, text = util.create_last_event_message(ref))
+        await context.bot.send_message(chat_id=mychat_id, text = util.create_last_event_message(ref))
     else:
         logging.info("last_status doesn\'t chanbed")
     logging.debug("Status checking end.")
@@ -86,6 +86,7 @@ if __name__ == '__main__':
     ref = db.reference(firebase_collection_ref)
 
     telegram_token = config.get('telegram', 'token')
+    mychat_id = config.get('telegram', 'mychat_id')
     application = ApplicationBuilder().token(telegram_token).build()
     
     reply_markup = menu_setup()
