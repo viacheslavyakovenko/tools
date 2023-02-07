@@ -14,6 +14,7 @@ from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 
 from el_availability import ElAvailability
+from chats import Chat
 
 
 def get_last_events(ref: Reference, count: int ):
@@ -40,6 +41,35 @@ def get_last_event(ref: Reference):
     return row
 
 
+def check_chat_it_at_db(ref: Reference, chat_id: int):
+
+    logging.info("check_chat_it_at_db (%s) started...", chat_id)
+    data = get_all_chats(ref)
+    #TODO: It should be done in more clever way than a simple iteration
+    if data is None:
+        return False
+    for key, val in data.items():
+        chat = json.loads(val, object_hook=lambda d: Chat(**d))
+        if chat.chat_id == chat_id:
+            return True
+        logging.info("chat_id: %s , user_name: %s", chat.chat_id, chat.user_name)
+    return False
+
+
+def get_all_chats(ref: Reference):
+
+    data = ref.order_by_key().get()
+    return data
+
+
+def save_chat_id(ref: Reference, chat_id: int, user_name: str):
+
+    dto = Chat(chat_id, user_name)
+    rowJson = json.dumps(dto.__dict__)
+    logging.info(rowJson)
+    ref.push().set(rowJson)    
+
+
 def create_last_event_message(ref: Reference):
     
     row = get_last_event(ref)
@@ -56,3 +86,4 @@ def create_last_event_message(ref: Reference):
 def min_statistic(ref: Reference):
 
     return "Починається ... Дочекайтесь наступного релізу!"
+
