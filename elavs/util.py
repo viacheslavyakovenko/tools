@@ -30,6 +30,29 @@ def get_last_events(ref: Reference, count: int ):
     msg = status_symbol + " Станом на " + formated_event_datetime + " електрика : " + row.status
     return msg
 
+
+def get_last_event(ref: Reference):
+
+    data = ref.order_by_key().limit_to_last(1).get()
+    for key, val in data.items():
+        row = json.loads(val, object_hook=lambda d: ElAvailability(**d))
+
+    return row
+
+
+def create_last_event_message(ref: Reference):
+    
+    row = get_last_event(ref)
+    event_datetime = parse(row.event_datetime)
+    formated_event_datetime = event_datetime.strftime("%d-%m-%Y %H:%M")
+    if row.status == 'On':
+        status_symbol = emoji.emojize(':green_heart:')
+    else:
+        status_symbol = emoji.emojize(':broken_heart:')
+    msg = status_symbol + " Станом на " + formated_event_datetime + " електрика : " + row.status
+    return msg
+
+
 def min_statistic(ref: Reference):
 
     return "Починається ... Дочекайтесь наступного релізу!"
